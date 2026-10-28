@@ -31,31 +31,37 @@
     "LICENSE",
     "README.md",
     "dist/**/*",
+    "!dist/**/*.test.js",
+    "!dist/**/*.test.js.map",
+    "!dist/**/*.test.d.ts",
+    "!dist/**/*.test.d.ts.map",
     "config.schema.json",
     "package.json"
   ],
   "types": "./dist/index.d.ts",
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src/**.ts",
+    "lint": "eslint src/**/*.ts",
     "build": "rimraf ./dist && tsc",
+    "pretest": "npm run build",
+    "test": "node --test dist/*.test.js",
     "prepublishOnly": "npm run lint && npm run build",
     "postpublish": "npm run clean",
     "start": "ts-node src/index.ts",
     "start-dev": "homebridge -I -D",
-    "watch": "npm run build && npm link && tsc && homebridge -I -D",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "npm run build && npm link && tsc && homebridge -I -D"
   },
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=18.0.0",
     "homebridge": "^1.6.0 || ^2.0.0-beta.0"
   },
   "dependencies": {
-    "node-alarm-dot-com": "2.1.1",
-    "polling-to-event": "^2.1.0"
+    "node-alarm-dot-com": "^2.5.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "^20.8.4",
+    "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
     "eslint": "8.51.0",

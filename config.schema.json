@@ -8,10 +8,10 @@
       "arming_obj": {
         "type": "object",
         "properties": {
-          "noEntryDelay": {"type": "boolean", "default": false},
-          "silentArming": {"type": "boolean", "default": false},
-          "nightArming": {"type":  "boolean", "default":  false},
-          "forceBypass": {"type":  "boolean", "default":  false}
+          "noEntryDelay": { "type": "boolean", "default": false },
+          "silentArming": { "type": "boolean", "default": false },
+          "nightArming": { "type": "boolean", "default": false },
+          "forceBypass": { "type": "boolean", "default": false }
         }
       }
     },
@@ -52,14 +52,14 @@
       "logLevel": {
         "title": "<b>Log Level</b>",
         "type": "integer",
-        "default": 3,
+        "default": 2,
         "required": true,
         "oneOf": [
-          {"title": "0 - No log entries", "enum": [0]},
-          {"title": "1 - Only errors", "enum": [1]},
-          {"title": "2 - Only warnings and errors", "enum": [2]},
-          {"title": "3 - Notices, warnings, and errors (Default)", "enum": [3]},
-          {"title": "4 - Verbose", "enum": [4]}
+          { "title": "0 - No log entries", "enum": [0] },
+          { "title": "1 - Only errors", "enum": [1] },
+          { "title": "2 - Only warnings and errors (Default)", "enum": [2] },
+          { "title": "3 - Notices, warnings, and errors", "enum": [3] },
+          { "title": "4 - Verbose", "enum": [4] }
         ]
       },
       "authTimeoutMinutes": {
@@ -72,28 +72,30 @@
         "title": "<b>Device Polling Interval<b>",
         "type": "integer",
         "placeholder": 60,
-        "description": "(<u>WARNING:</u> choosing a time less than 60 seconds could possibly ban/disable your account from Alarm.com.)"
+        "description": "Only used as a fallback if the WebSocket connection repeatedly fails to establish. (<u>WARNING:</u> choosing a time less than 60 seconds could possibly ban/disable your account from Alarm.com.)"
       },
       "armingModes": {
-        "title": "<b>Alarm.com arming modes</b>.<p>Not all panels are compatible with silent arming. Enabling this without proper support will break thatt arming type.",
+        "title": "<b>Alarm.com arming modes</b>.<p>Not all panels are compatible with silent arming. Enabling this without proper support will break that arming type.",
         "type": "object",
         "properties": {
           "away": {
-            "$ref": "#/definitions/arming_obj", "extendRefs": true
+            "$ref": "#/definitions/arming_obj",
+            "extendRefs": true
           },
           "night": {
-            "$ref": "#/definitions/arming_obj", "extendRefs": true
+            "$ref": "#/definitions/arming_obj",
+            "extendRefs": true
           },
           "stay": {
-            "$ref": "#/definitions/arming_obj", "extendRefs": true
+            "$ref": "#/definitions/arming_obj",
+            "extendRefs": true
           }
         }
       },
       "ignoredDevices": {
         "title": "Ignored Devices",
-        "description": "IDs for Alarm.com accessories you wish to hide in Homekit.",
+        "description": "IDs for Alarm.com accessories you wish to hide in HomeKit.",
         "type": "array",
-        "maxItems": 0,
         "items": {
           "title": "Ignored Device",
           "type": "string",

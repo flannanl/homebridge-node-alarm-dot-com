@@ -5,6 +5,7 @@ import { SensorType } from 'node-alarm-dot-com';
  * This is the information that is shared amongst all devices.
  */
 export interface BaseContext {
+  [x: string]: unknown;
   /**
    * accID is the ID assigned from Alarm.com.
    */
@@ -45,6 +46,7 @@ export interface PartitionContext extends BaseContext {
   state: CharacteristicValue;
   desiredState: CharacteristicValue;
   statusFault: boolean;
+  supportsNightArming: boolean;
   partitionType: 'default';
 }
 
@@ -65,15 +67,24 @@ export interface GarageContext extends BaseContext {
 }
 
 export interface ThermostatContext extends BaseContext {
-  accID: string,
-  name: string,
-  state: CharacteristicValue,
-  desiredState: CharacteristicValue,
-  currentTemperature: CharacteristicValue,
-  targetTemperature: CharacteristicValue,
-  thermostatType: string,
-  supportsHumidity: boolean,
-  humidityLevel: CharacteristicValue,
+  accID: string;
+  name: string;
+  state: CharacteristicValue;
+  desiredState: CharacteristicValue;
+  currentTemperature: CharacteristicValue;
+  targetTemperature: CharacteristicValue;
+  thermostatType: string;
+  supportsHumidity: boolean;
+  humidityLevel: CharacteristicValue;
+}
+
+export interface CameraContext extends BaseContext {
+  accID: string;
+  name: string;
+  model: string;
+  motionDetected: boolean;
+  isDoorbell: boolean;
+  cameraType: 'default';
 }
 
 // Region: Function Casts
@@ -95,6 +106,9 @@ export function isGarage(accessory: PlatformAccessory): accessory is PlatformAcc
 }
 export function isThermostat(accessory: PlatformAccessory): accessory is PlatformAccessory<ThermostatContext> {
   return (accessory as PlatformAccessory<ThermostatContext>).context.thermostatType !== undefined;
+}
+export function isCamera(accessory: PlatformAccessory): accessory is PlatformAccessory<CameraContext> {
+  return (accessory as PlatformAccessory<CameraContext>).context.cameraType !== undefined;
 }
 
 // End Region
