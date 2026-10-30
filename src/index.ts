@@ -63,6 +63,8 @@ const AUTH_TIMEOUT_MINS = 10;
 const POLL_TIMEOUT_SECS = 60;
 const WS_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 const WS_REFRESH_JITTER_MS = 15 * 1000;
+// Without this, an unreachable endpoint IP blocks for the OS TCP timeout (~130s).
+const WS_HANDSHAKE_TIMEOUT_MS = 10 * 1000;
 const WS_MAX_CONSECUTIVE_FAILURES = 5;
 const HOURLY_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
 const LOG_LEVEL = CustomLogLevel.WARN;
@@ -355,7 +357,7 @@ class ADCPlatform implements DynamicPlatformPlugin {
       }
 
       this.log.info('Connecting to Alarm.com WebSocket...');
-      const client = new WebSocket(wsUrl);
+      const client = new WebSocket(wsUrl, { handshakeTimeout: WS_HANDSHAKE_TIMEOUT_MS });
       this.wsClient = client;
 
       client.onmessage = (event) => {
@@ -376,7 +378,8 @@ class ADCPlatform implements DynamicPlatformPlugin {
 
         this.log.info('WebSocket connection established.');
 
-        if (this.wsConsecutiveFailures > 0) {
+        const recoveredFromFailure = this.wsConsecutiveFailures > 0;
+        if (recoveredFromFailure) {
           this.log.info('WebSocket connection recovered; stopping polling fallback.');
         }
         this.wsConsecutiveFailures = 0;
@@ -397,6 +400,13 @@ class ADCPlatform implements DynamicPlatformPlugin {
           },
           WS_REFRESH_INTERVAL_MS + WS_REFRESH_JITTER_MS * Math.random()
         );
+
+        // Events sent while the socket was down are never replayed, so reconcile state over REST.
+        // Skipped for clean proactive refreshes (no failures) to avoid needless API calls.
+        if (recoveredFromFailure) {
+          this.log.info('Reconciling device state after WebSocket recovery...');
+          this.refreshDevices();
+        }
       };
 
       client.onclose = (event) => {
